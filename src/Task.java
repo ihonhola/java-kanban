@@ -1,15 +1,13 @@
-class Task {
-    protected String name;
-    protected String description;
-    public Status status;
-    private static int nextId = 1;
-    protected int id;
+public class Task {
+    private String name;
+    private String description;
+    private Status status;
+    private int id;
 
     public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.id = nextId++;
     }
 
     @Override
@@ -28,6 +26,30 @@ class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
 

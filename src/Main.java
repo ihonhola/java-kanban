@@ -21,7 +21,7 @@ public class Main {
                     taskManager.createSubTask();
                     break;
                 case 4:
-                    TaskManager.printAllTasks();
+                    taskManager.printAllTasks();
                     break;
                 case 5:
                     taskManager.deleteAllTasks();
@@ -37,6 +37,14 @@ public class Main {
                     break;
                 case 9:
                     taskManager.printSubTasksByEpic();
+                    break;
+                case 10:
+                    System.out.println("Введите номер эпика:");
+                    int epicNumber = scanner.nextInt();
+                    taskManager.deleteSubTasksOfEpic(epicNumber);
+                    break;
+                case 11:
+                    taskManager.deleteAllSubtasks();
                     break;
                 case 0:
                     System.out.println("Адиос амигос!");
@@ -59,6 +67,8 @@ public class Main {
             System.out.println("7 - Обновить задачу");
             System.out.println("8 - Удалить задачу по номеру");
             System.out.println("9 - Посмотреть подзадачи эпика");
+            System.out.println("10 - Удалить все подзадачи эпика");
+            System.out.println("11 - Очистить список подзадач");
             System.out.println("0 - Выход");
         }
 }
