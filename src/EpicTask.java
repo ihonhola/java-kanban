@@ -19,7 +19,7 @@ public class EpicTask extends Task {
         }
     }
 
-    public void updateStatus(){
+    private void updateStatus(){
         if (subTasksList.isEmpty()){
             super.setStatus(Status.NEW);
             return;
@@ -44,6 +44,40 @@ public class EpicTask extends Task {
         } else {
             super.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    public void addSubTask(SubTask updatedSubTask) {
+        if (updatedSubTask == null || updatedSubTask.getEpicId() != this.getId()) {
+            System.out.println("Ошибка - подзадача пуста или не тот номер эпика");
+            return;
+        }
+
+        for (int i = 0; i < subTasksList.size(); i++) {
+            SubTask currentSubTask = subTasksList.get(i);
+            if (currentSubTask.getId() == updatedSubTask.getId()) {
+                subTasksList.remove(i);
+                break;
+            }
+        }
+
+        subTasksList.add(updatedSubTask);
+        updateStatus();
+    }
+
+    public void removeSubTask(int subTaskId) {
+        for (int i = 0; i < subTasksList.size(); i++) {
+            SubTask current = subTasksList.get(i);
+            if (current.getId() == subTaskId) {
+                subTasksList.remove(i);
+                updateStatus();
+                return;
+            }
+        }
+    }
+
+    public void removeAllSubTasks() {
+        subTasksList.clear();
+        updateStatus();
     }
 
     @Override

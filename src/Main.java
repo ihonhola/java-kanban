@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -13,42 +14,50 @@ public class Main {
 
         taskManager.createEpic(new EpicTask("Переезд в новую квартиру", "Перевезти все вещи"));
         taskManager.createSubTask(new SubTask("Собрать вещи", "Вещи из каждой комнаты",
-                Status.IN_PROGRESS, 3), 3);
+                Status.IN_PROGRESS, 3));
         taskManager.createSubTask(new SubTask("Заказать перевозку", "Яндекс доставка",
-                Status.NEW, 3), 3);
+                Status.NEW, 3));
 
         taskManager.createEpic(new EpicTask("Подготовка к командировке", "Конференция в Иркутске"));
         taskManager.createSubTask(new SubTask("Проживание", "Забронировать гостиницу",
-                Status.DONE, 6), 6);
+                Status.DONE, 6));
 
-        System.out.println("Задачи:" + taskManager.getTasks());
-        System.out.println("Задачи:" + taskManager.getEpicTasks());
-        System.out.println("Задачи:" + taskManager.getSubTasks());
+        System.out.println("Задачи:" + taskManager.getTasksList());
+        System.out.println("Задачи:" + taskManager.getEpicTasksList());
+        System.out.println("Задачи:" + taskManager.getSubTasksList());
 
-        System.out.println("Обновляем одну задачу, один эпик и две подзадачи к нему");
+        System.out.println("Обновляем статусы задач и подзадач (-> эпиков)");
 
-        taskManager.updateTask(new Task("Закончить спринт 4", "Потом приступить к спринту 5",
-                Status.IN_PROGRESS), 1);
-        taskManager.updateEpic(new EpicTask("Переезд в новую квартиру", "Найти новую квартиру"),
-                3);
-        taskManager.updateSubTask(new SubTask("Поиск квартиры", "Посмотреть квартиру на ЦИАНе",
-                Status.DONE, 3), 4);
-        taskManager.updateSubTask(new SubTask("Сбор вещей", "Купить коробки для переезда",
-                Status.DONE, 3), 5);
+        Task updatedTask1 = new Task ("Начать спринт 5", "Успеть в сроки", Status.IN_PROGRESS);
+        updatedTask1.setId(1);
+        taskManager.updateTask(updatedTask1);
+        Task updatedTask2 = new Task ("Выполнить ФЗ спринта 4", "Исправить замечания", Status.DONE);
+        updatedTask2.setId(2);
+        taskManager.updateTask(updatedTask2);
+        SubTask updatedSubTask1 = new SubTask("Собрать вещи", "Вещи из каждой комнаты",
+                Status.DONE, 3);
+        updatedSubTask1.setId(4);
+        taskManager.updateSubTask(updatedSubTask1);
+        SubTask updatedSubTask2 = new SubTask("Заказать перевозку", "Яндекс доставка",
+                Status.DONE, 3);
+        updatedSubTask2.setId(5);
+        taskManager.updateSubTask(updatedSubTask2);
+        SubTask updatedSubTask3 = new SubTask("Проживание", "Гостиница забронирована", Status.DONE, 6);
+        updatedSubTask3.setId(7);
+        taskManager.updateSubTask(updatedSubTask3);
 
-        System.out.println("Задачи:" + taskManager.getTasks());
-        System.out.println("Задачи:" + taskManager.getEpicTasks());
-        System.out.println("Задачи:" + taskManager.getSubTasks());
+        System.out.println("Задачи:" + taskManager.getTasksList());
+        System.out.println("Задачи:" + taskManager.getEpicTasksList());
+        System.out.println("Задачи:" + taskManager.getSubTasksList());
 
-        System.out.println("Удаляем одну задачу, один эпик и одну подзадачу эпика");
+        System.out.println("Удаляем одну задачу и один эпик");
 
         taskManager.deleteTask(1);
         taskManager.deleteEpicTask(3);
-        taskManager.deleteSubTask(7);
 
-        System.out.println("Задачи:" + taskManager.getTasks());
-        System.out.println("Задачи:" + taskManager.getEpicTasks());
-        System.out.println("Задачи:" + taskManager.getSubTasks());
+        System.out.println("Задачи:" + taskManager.getTasksList());
+        System.out.println("Задачи:" + taskManager.getEpicTasksList());
+        System.out.println("Задачи:" + taskManager.getSubTasksList());
 
         while (true) {
             printMenu();
@@ -57,24 +66,30 @@ public class Main {
 
             switch (command) {
                 case 1:
-                    taskManager.printAllTasks();
+                    ArrayList<Task> allTasks = taskManager.getAllTasksList();
+                    for (Task task : allTasks) {
+                        System.out.println(task);
+                    }
                     break;
                 case 2:
-                    taskManager.deleteAllTasks();
+                    taskManager.deleteAll(); //можно заменить на удаление по отдельности
                     break;
                 case 3:
                     taskManager.printTaskByNumber();
                     break;
                 case 4:
-                    taskManager.printSubTasksByEpic();
-                    break;
-                case 5:
                     System.out.println("Введите номер эпика:");
-                    int epicNumber = scanner.nextInt();
-                    taskManager.deleteSubTasksOfEpic(epicNumber);
-                    break;
-                case 6:
-                    taskManager.deleteAllSubtasks();
+                    int epicId = scanner.nextInt();
+                    ArrayList<SubTask> subTasks = taskManager.getSubTasksByEpic(epicId);
+
+                    if (subTasks.isEmpty()) {
+                        System.out.println("У эпика нет подзадач или он не существует");
+                    } else {
+                        System.out.println("Подзадачи эпика " + epicId + ":");
+                        for (SubTask subTask : subTasks) {
+                            System.out.println(subTask);
+                        }
+                    }
                     break;
                 case 0:
                     System.out.println("Адиос амигос!");
@@ -88,12 +103,10 @@ public class Main {
 
     public static void printMenu() {
             System.out.println("Введите одну из команд: ");
-            System.out.println("1 - Посмотреть список задач");
+            System.out.println("1 - Посмотреть список всех задач");
             System.out.println("2 - Удалить все задачи");
             System.out.println("3 - Вывести задачу по номеру");
             System.out.println("4 - Посмотреть подзадачи эпика");
-            System.out.println("5 - Удалить все подзадачи эпика");
-            System.out.println("6 - Очистить список подзадач");
             System.out.println("0 - Выход");
     }
 }
