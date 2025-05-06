@@ -215,12 +215,7 @@ public class TaskManager {
     }
 
     public void deleteAllEpics() {
-        for (EpicTask epic : epicTasks.values()) {
-            for (SubTask subTask : epic.getSubTasks()) {
-                subTasks.remove(subTask.getId());
-            }
-        }
-
+        subTasks.clear();
         epicTasks.clear();
         System.out.println("Все эпики и их подзадачи удалены");
     }
