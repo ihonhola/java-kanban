@@ -48,12 +48,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         task.setId(nextId++);
         tasks.put(task.getId(), task);
-        /* System.out.println("Введите название задачи: ");
-        String name = scanner.nextLine();
-        System.out.println("Введите описание задачи:");
-        String description = scanner.nextLine();
-        Status status = choiceStatus();
-        addTask(name, description, status); */
         return task.getId();
     }
 
@@ -65,11 +59,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         epicTask.setId(nextId++);
         epicTasks.put(epicTask.getId(), epicTask);
-        /* System.out.println("Введите название эпика:");
-        String name = scanner.nextLine();
-        System.out.println("Введите описание эпика:");
-        String description = scanner.nextLine();
-        addEpic(name, description); */
         return epicTask.getId();
     }
 
