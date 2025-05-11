@@ -1,10 +1,11 @@
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         System.out.println("Добавляем 2 задачи, эпик с двумя подзадачами, эпик с одной подзадачей");
 
@@ -25,6 +26,7 @@ public class Main {
         System.out.println("Задачи:" + taskManager.getTasksList());
         System.out.println("Задачи:" + taskManager.getEpicTasksList());
         System.out.println("Задачи:" + taskManager.getSubTasksList());
+
 
         System.out.println("Обновляем статусы задач и подзадач (-> эпиков)");
 
@@ -59,6 +61,19 @@ public class Main {
         System.out.println("Задачи:" + taskManager.getEpicTasksList());
         System.out.println("Задачи:" + taskManager.getSubTasksList());
 
+        System.out.println("=== Начальное состояние ===");
+        printAllTasks(taskManager);
+        System.out.println("=== После просмотра задач ===");
+        taskManager.getSubTask(7);
+        taskManager.getTask(2);
+        taskManager.getEpic(6);
+        printAllTasks(taskManager);
+
+        System.out.println("=== После повторного просмотра ===");
+        taskManager.getTask(2);
+        printAllTasks(taskManager);
+
+
         while (true) {
             printMenu();
             int command = scanner.nextInt();
@@ -91,6 +106,13 @@ public class Main {
                         }
                     }
                     break;
+                case 5:
+                    ArrayList<Task> history = taskManager.getHistory();
+                    System.out.println("История просмотров:");
+                    for (Task task : history) {
+                        System.out.println(task);
+                    }
+                    break;
                 case 0:
                     System.out.println("Адиос амигос!");
                     return;
@@ -107,6 +129,42 @@ public class Main {
             System.out.println("2 - Удалить все задачи");
             System.out.println("3 - Вывести задачу по номеру");
             System.out.println("4 - Посмотреть подзадачи эпика");
+            System.out.println("5 - Посмотреть историю просмотров задач");
             System.out.println("0 - Выход");
+    }
+
+    public static void printHistory(TaskManager taskManager){
+        ArrayList<Task> history = taskManager.getHistory();
+        System.out.println("История просмотров:");
+        for (Task task : history) {
+        System.out.println(task);
+        }
+    }
+
+    private static void printAllTasks(TaskManager taskManager) {
+        System.out.println("Задачи:");
+        for (Task task : taskManager.getTasksList()) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (EpicTask epic : taskManager.getEpicTasksList()) {
+            System.out.println(epic);
+
+            for (SubTask subTask : taskManager.getSubTasksByEpic(epic.getId())) {
+                System.out.println("--> " + subTask);
+            }
+        }
+
+        System.out.println("Подзадачи:");
+        for (SubTask subTask : taskManager.getSubTasksList()) {
+            System.out.println(subTask);
+        }
+
+        System.out.println("История (" + taskManager.getHistory().size() + " из 10):");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
+        System.out.println("─────────────────────────────");
     }
 }
