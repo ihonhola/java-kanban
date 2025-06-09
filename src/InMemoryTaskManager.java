@@ -1,4 +1,4 @@
-import com.sun.source.util.TaskListener;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Status choiceStatus(){
+    public Status choiceStatus() {
         System.out.println("Доступные статусы: ");
         System.out.println("1. " + Status.NEW);
         System.out.println("2. " + Status.IN_PROGRESS);
@@ -29,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         int choice = scanner.nextInt();
         scanner.nextLine();
-        switch (choice){
+        switch (choice) {
             case 1:
                 return Status.NEW;
             case 2:
@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createTask(Task task){
+    public int createTask(Task task) {
         if (task == null) {
             return 0;
         }
@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createEpic(EpicTask epicTask){
+    public int createEpic(EpicTask epicTask) {
         if (epicTask == null) {
             return 0;
         }
@@ -65,7 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createSubTask(SubTask subTask){
+    public int createSubTask(SubTask subTask) {
         if (subTask == null || subTask.getEpicId() == 0) {
             return 0;
         }
@@ -89,7 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAll(){
+    public void deleteAll() {
         tasks.clear();
         epicTasks.clear();
         subTasks.clear();
@@ -309,7 +309,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Task> getHistory() {
         ArrayList<Task> result = new ArrayList<>();
-        for (Task task: historyManager.getHistory()){
+        for (Task task: historyManager.getHistory()) {
             if (tasks.containsKey(task.getId()) ||
             epicTasks.containsKey(task.getId()) ||
             subTasks.containsKey(task.getId())) {
