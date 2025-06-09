@@ -29,10 +29,10 @@ public class Main {
 
         System.out.println("Обновляем статусы задач и подзадач (-> эпиков)");
 
-        Task updatedTask1 = new Task ("Начать спринт 5", "Успеть в сроки", Status.IN_PROGRESS);
+        Task updatedTask1 = new Task("Начать спринт 5", "Успеть в сроки", Status.IN_PROGRESS);
         updatedTask1.setId(1);
         taskManager.updateTask(updatedTask1);
-        Task updatedTask2 = new Task ("Выполнить ФЗ спринта 4", "Исправить замечания", Status.DONE);
+        Task updatedTask2 = new Task("Выполнить ФЗ спринта 4", "Исправить замечания", Status.DONE);
         updatedTask2.setId(2);
         taskManager.updateTask(updatedTask2);
         SubTask updatedSubTask1 = new SubTask("Собрать вещи", "Вещи из каждой комнаты",
@@ -132,7 +132,7 @@ public class Main {
             System.out.println("0 - Выход");
     }
 
-    public static void printHistory(TaskManager taskManager){
+    public static void printHistory(TaskManager taskManager) {
         ArrayList<Task> history = taskManager.getHistory();
         System.out.println("История просмотров:");
         for (Task task : history) {
