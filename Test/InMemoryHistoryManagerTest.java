@@ -1,46 +1,70 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
-    private Task task;
+    private Task task1;
+    private Task task2;
 
     @BeforeEach
     void setUp() {
         historyManager = Managers.getDefaultHistory();
-        task = new Task("Задача", "Описание", Status.NEW);
-        task.setId(1);
+        task1 = new Task("Задача 1", "Описание 1", Status.NEW);
+        task1.setId(1);
+        task2 = new Task("Задача 2", "Описание 2", Status.NEW);
+        task2.setId(2);
     }
 
     @Test
-    void shouldPreserveTaskStateInHistory() {
-        historyManager.add(task);
-        Task fromHistory = historyManager.getHistory().get(0);
+    void shouldAddTaskToHistory() {
+        historyManager.add(task1);
+        List<Task> history = historyManager.getHistory();
 
-        assertEquals(task.getId(), fromHistory.getId(), "ID должен сохраняться");
-        assertEquals(task.getName(), fromHistory.getName(), "Имя должно сохраняться");
-        assertEquals(task.getStatus(), fromHistory.getStatus(), "Статус должен сохраняться");
+        assertEquals(1, history.size());
+        assertEquals(task1, history.get(0));
     }
 
     @Test
-    void shouldNotExceedMaxSize() {
-        for (int i = 0; i < 15; i++) {
-            Task t = new Task("Task" + i, "Desc", Status.NEW);
-            t.setId(i);
-            historyManager.add(t);
-        }
+    void shouldRemoveDuplicates() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task1); // Дубликат
 
-        assertEquals(10, historyManager.getHistory().size(),
-                "История не должна превышать 10 элементов");
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(2, history.size());
+        assertEquals(task2, history.get(0));
+        assertEquals(task1, history.get(1));
     }
+
     @Test
-    void add() {
-        historyManager.add(task);
-        final ArrayList<Task> history = historyManager.getHistory();
-        assertNotNull(history, "После добавления задачи, история не должна быть пустой.");
-        assertEquals(1, history.size(), "После добавления задачи, история не должна быть пустой.");
+    void shouldRemoveTaskFromHistory() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.remove(task1.getId());
+
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(1, history.size());
+        assertEquals(task2, history.get(0));
+    }
+
+    @Test
+    void shouldPreserveOrder() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task1); // Дубликат
+
+        List<Task> history = historyManager.getHistory();
+
+        assertEquals(List.of(task2, task1), history);
+    }
+
+    @Test
+    void shouldHandleEmptyHistory() {
+        assertTrue(historyManager.getHistory().isEmpty());
     }
 }

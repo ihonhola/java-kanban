@@ -1,3 +1,5 @@
+import com.sun.source.util.TaskListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -68,14 +70,14 @@ public class InMemoryTaskManager implements TaskManager {
             return 0;
         }
 
-        int epicId = subTask.getEpicId();
-        if (!epicTasks.containsKey(epicId)) {
-            System.out.println("Эпик под номером " + epicId + " не существует");
+        if (subTask.getId() == subTask.getEpicId()) {
+            System.out.println("Ошибка: Id подзадачи не может совпадать с Id эпика");
             return 0;
         }
 
-        if (subTask.getId() == subTask.getEpicId()) {
-            System.out.println("Ошибка: Id подзадачи не может совпадать с Id эпика");
+        int epicId = subTask.getEpicId();
+        if (!epicTasks.containsKey(epicId)) {
+            System.out.println("Эпик под номером " + epicId + " не существует");
             return 0;
         }
 
@@ -199,6 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.remove(taskId) == null) {
             System.out.println("Задачи с номером " + taskId + " не существует");
         } else {
+            historyManager.remove(taskId);
             System.out.println("Задача " + taskId + " удалена");
         }
     }
@@ -211,12 +214,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         EpicTask epic = epicTasks.remove(epicId);
+        historyManager.remove(epicId);
 
         ArrayList<SubTask> subTasksOfEpic = epic.getSubTasks();
 
         for (int i = 0; i < subTasksOfEpic.size(); i++) {
             SubTask currentSubTask = subTasksOfEpic.get(i);
             subTasks.remove(currentSubTask.getId());
+            historyManager.remove(currentSubTask.getId());
         }
 
         System.out.println("Эпик " + epicId + " и все его подзадачи удалены");
@@ -225,6 +230,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(int subTaskId) {
         SubTask subTask = subTasks.remove(subTaskId);
+        historyManager.remove(subTaskId);
 
         if (subTask == null) {
             System.out.println("Подзадачи с ID " + subTaskId + " не существует");
@@ -302,8 +308,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Task> getHistory() {
-        return historyManager.getHistory();
+        ArrayList<Task> result = new ArrayList<>();
+        for (Task task: historyManager.getHistory()){
+            if (tasks.containsKey(task.getId()) ||
+            epicTasks.containsKey(task.getId()) ||
+            subTasks.containsKey(task.getId())) {
+            result.add(task);
+            }
+        }
+        return result;
     }
-
-
 }
