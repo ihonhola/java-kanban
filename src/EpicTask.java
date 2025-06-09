@@ -19,8 +19,8 @@ public class EpicTask extends Task {
         }
     }
 
-    private void updateStatus(){
-        if (subTasksList.isEmpty()){
+    private void updateStatus() {
+        if (subTasksList.isEmpty()) {
             super.setStatus(Status.NEW);
             return;
         }
@@ -28,7 +28,7 @@ public class EpicTask extends Task {
         boolean allNew = true;
         boolean allDone = true;
 
-        for (SubTask subTask : subTasksList){
+        for (SubTask subTask : subTasksList) {
             if (subTask.getStatus() != Status.NEW) {
                 allNew = false;
             }
