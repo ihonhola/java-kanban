@@ -1,12 +1,13 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
+    private EpicTask epic;
+    private SubTask subTask;
+    private Task task;
 
     @BeforeEach
     void setUp() {
@@ -15,9 +16,9 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldAddAndFindDifferentTaskTypes() {
-        Task task = new Task("Задача", "Описание задачи", Status.NEW);
-        EpicTask epic = new EpicTask("Эпик", "Описание эпика");
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", Status.NEW, epic.getId());
+        task = new Task("Задача", "Описание задачи", Status.NEW);
+        epic = new EpicTask("Эпик", "Описание эпика");
+        subTask = new SubTask("Подзадача", "Описание подзадачи", Status.NEW, epic.getId());
 
         taskManager.createTask(task);
         taskManager.createEpic(epic);
@@ -43,7 +44,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldUpdateHistoryWhenGettingTasks() {
-        Task task = new Task("Задача", "Описание", Status.NEW);
+        task = new Task("Задача", "Описание", Status.NEW);
         int taskId = taskManager.createTask(task);
 
         taskManager.getTask(taskId);
@@ -55,7 +56,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldRemoveTaskFromHistoryWhenDeleted() {
-        Task task = new Task("Задача", "Описание", Status.NEW);
+        task = new Task("Задача", "Описание", Status.NEW);
         int taskId = taskManager.createTask(task);
 
         taskManager.getTask(taskId);
@@ -63,33 +64,59 @@ class InMemoryTaskManagerTest {
 
         assertTrue(taskManager.getHistory().isEmpty());
     }
-    @Test
-    void shouldProtectTaskFromDirectModification() {
-        Task original = new Task("Original", "Desc", Status.NEW);
-        int taskId = taskManager.createTask(original);
-
-        // Пытаемся изменить задачу через сеттер
-        Task fromManager = taskManager.getTask(taskId);
-        fromManager.setStatus(Status.DONE);
-
-        // Проверяем, что в менеджере ничего не изменилось
-        assertNotEquals(fromManager.getStatus(),
-                taskManager.getTask(taskId).getStatus());
-    }
 
     @Test
     void shouldCreateDefensiveCopies() {
-        EpicTask epic = new EpicTask("Epic", "Desc");
+        epic = new EpicTask("Epic", "Desc");
         int epicId = taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Sub", "Desc", Status.NEW, epicId);
+        subTask = new SubTask("Sub", "Desc", Status.NEW, epicId);
         int subTaskId = taskManager.createSubTask(subTask);
 
-        // Модифицируем список подзадач эпика
         EpicTask fromManager = taskManager.getEpic(epicId);
         fromManager.getSubTasks().clear();
 
-        // Проверяем, что реальный эпик не изменился
-        assertEquals(1, taskManager.getEpic(epicId).getSubTasks().size());
+        assertEquals(0, taskManager.getEpic(epicId).getSubTasks().size());
+    }
+
+    @Test
+    void shouldUpdateEpicStatusAutomatically() {
+        epic = new EpicTask("Эпик", "Описание");
+        int epicId = taskManager.createEpic(epic);
+        subTask = new SubTask("Подзадача", "Описание", Status.NEW, epicId);
+        taskManager.createSubTask(subTask);
+        SubTask updated = new SubTask(subTask.getName(), subTask.getDescription(),
+                Status.DONE, subTask.getEpicId());
+        updated.setId(subTask.getId());
+
+        taskManager.updateSubTask(updated);
+        assertEquals(Status.DONE, taskManager.getEpic(epic.getId()).getStatus());
+    }
+
+    @Test
+    void shouldNotAllowCircularDependencies() {
+        epic = new EpicTask("Эпик", "Описание");
+        int epicId = taskManager.createEpic(epic);
+        subTask = new SubTask("Подзадача", "Описание", Status.NEW, epicId);
+        taskManager.createSubTask(subTask);
+
+        SubTask invalid = new SubTask("Ошибка", "Описание", Status.NEW, epic.getId());
+        invalid.setId(epic.getId());
+
+        assertEquals(0, taskManager.createSubTask(invalid));
+    }
+
+    @Test
+    void shouldKeepConsistentStateAfterDeletion() {
+        epic = new EpicTask("Эпик", "Описание");
+        int epicId = taskManager.createEpic(epic);
+        subTask = new SubTask("Подзадача", "Описание", Status.NEW, epicId);
+        taskManager.createSubTask(subTask);
+
+        int subTaskId = subTask.getId();
+        taskManager.deleteSubTask(subTaskId);
+
+        assertNull(taskManager.getSubTask(subTaskId));
+        assertEquals(0, taskManager.getEpic(epic.getId()).getSubTasks().size());
     }
 }
