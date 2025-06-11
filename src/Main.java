@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -106,7 +107,7 @@ public class Main {
                     }
                     break;
                 case 5:
-                    ArrayList<Task> history = taskManager.getHistory();
+                    List<Task> history = taskManager.getHistory();
                     System.out.println("История просмотров:");
                     for (Task task : history) {
                         System.out.println(task);
@@ -133,7 +134,7 @@ public class Main {
     }
 
     public static void printHistory(TaskManager taskManager) {
-        ArrayList<Task> history = taskManager.getHistory();
+        List<Task> history = taskManager.getHistory();
         System.out.println("История просмотров:");
         for (Task task : history) {
         System.out.println(task);
