@@ -119,4 +119,23 @@ class InMemoryTaskManagerTest {
         assertNull(taskManager.getSubTask(subTaskId));
         assertEquals(0, taskManager.getEpic(epic.getId()).getSubTasks().size());
     }
+
+    @Test
+    void deleteAllShouldClearHistory() {
+        Task task = new Task("Задача", "Описание", Status.NEW);
+        int taskId = taskManager.createTask(task);
+        taskManager.getTask(taskId);
+
+        EpicTask epic = new EpicTask("Эпик", "Описание");
+        int epicId = taskManager.createEpic(epic);
+        taskManager.getEpic(epicId);
+
+        assertFalse(taskManager.getHistory().isEmpty());
+
+        taskManager.deleteAll();
+
+        assertTrue(taskManager.getHistory().isEmpty());
+        assertTrue(taskManager.getTasksList().isEmpty());
+        assertTrue(taskManager.getEpicTasksList().isEmpty());
+    }
 }

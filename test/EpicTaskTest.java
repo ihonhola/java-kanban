@@ -30,7 +30,6 @@ class EpicTaskTest {
         int result = taskManager.createSubTask(invalidSubTask);
 
         assertEquals(0, result, "Не должна добавляться подзадача с ID эпика");
-        //assertTrue(taskManager.getSubTasksList().isEmpty());
         assertEquals(2, taskManager.getSubTasksList().size(), "Должно быть 2 подзадачи");
     }
 

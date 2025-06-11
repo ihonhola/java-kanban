@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node<Task>> historyMap = new HashMap<>();
     private Node<Task> head;
     private Node<Task> tail;
-    private int size = 0;
 
     @Override
     public void add(Task task) {
@@ -42,14 +40,21 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List<Task> getHistory() {
-        List<Task> result = new ArrayList<>();
+    public ArrayList<Task> getHistory() {
+        ArrayList<Task> result = new ArrayList<>();
         Node<Task> current = head;
         while (current != null) {
             result.add(current.data);
             current = current.next;
         }
         return result;
+    }
+
+    @Override
+    public void clear() {
+        historyMap.clear();
+        head = null;
+        tail = null;
     }
 
     private void linkLast(Task task) {
@@ -61,7 +66,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             oldTail.next = newNode;
         }
-        size++;
         historyMap.put(task.getId(), newNode);
     }
 
@@ -88,6 +92,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         node.data = null;
-        size--;
     }
 }
