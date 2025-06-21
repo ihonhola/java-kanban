@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -18,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Status choiceStatus(){
+    public Status choiceStatus() {
         System.out.println("Доступные статусы: ");
         System.out.println("1. " + Status.NEW);
         System.out.println("2. " + Status.IN_PROGRESS);
@@ -27,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         int choice = scanner.nextInt();
         scanner.nextLine();
-        switch (choice){
+        switch (choice) {
             case 1:
                 return Status.NEW;
             case 2:
@@ -41,7 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createTask(Task task){
+    public int createTask(Task task) {
         if (task == null) {
             return 0;
         }
@@ -52,7 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createEpic(EpicTask epicTask){
+    public int createEpic(EpicTask epicTask) {
         if (epicTask == null) {
             return 0;
         }
@@ -63,19 +64,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createSubTask(SubTask subTask){
+    public int createSubTask(SubTask subTask) {
         if (subTask == null || subTask.getEpicId() == 0) {
+            return 0;
+        }
+
+        if (subTask.getId() == subTask.getEpicId()) {
+            System.out.println("Ошибка: Id подзадачи не может совпадать с Id эпика");
             return 0;
         }
 
         int epicId = subTask.getEpicId();
         if (!epicTasks.containsKey(epicId)) {
             System.out.println("Эпик под номером " + epicId + " не существует");
-            return 0;
-        }
-
-        if (subTask.getId() == subTask.getEpicId()) {
-            System.out.println("Ошибка: Id подзадачи не может совпадать с Id эпика");
             return 0;
         }
 
@@ -87,11 +88,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAll(){
+    public void deleteAll() {
         tasks.clear();
         epicTasks.clear();
         subTasks.clear();
-        System.out.println("Все задачи, эпики и подзадачи удалены!");
+        historyManager.clear();
+        System.out.println("Все задачи, эпики и подзадачи удалены! История очищена.");
     }
 
     @Override
@@ -199,6 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.remove(taskId) == null) {
             System.out.println("Задачи с номером " + taskId + " не существует");
         } else {
+            historyManager.remove(taskId);
             System.out.println("Задача " + taskId + " удалена");
         }
     }
@@ -211,12 +214,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         EpicTask epic = epicTasks.remove(epicId);
+        historyManager.remove(epicId);
 
         ArrayList<SubTask> subTasksOfEpic = epic.getSubTasks();
 
-        for (int i = 0; i < subTasksOfEpic.size(); i++) {
-            SubTask currentSubTask = subTasksOfEpic.get(i);
-            subTasks.remove(currentSubTask.getId());
+        for (SubTask subTask : subTasksOfEpic) {
+            subTasks.remove(subTask.getId());
+            historyManager.remove(subTask.getId());
         }
 
         System.out.println("Эпик " + epicId + " и все его подзадачи удалены");
@@ -225,6 +229,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(int subTaskId) {
         SubTask subTask = subTasks.remove(subTaskId);
+        historyManager.remove(subTaskId);
 
         if (subTask == null) {
             System.out.println("Подзадачи с ID " + subTaskId + " не существует");
@@ -301,9 +306,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
-
-
 }

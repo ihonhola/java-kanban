@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     Status choiceStatus();
@@ -47,5 +48,5 @@ public interface TaskManager {
 
     EpicTask getEpic(int id);
 
-    ArrayList<Task> getHistory();
+    List<Task> getHistory();
 }
