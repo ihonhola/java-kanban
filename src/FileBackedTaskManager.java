@@ -144,7 +144,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static Task fromString(String value) {
-        String[] parts = value.split(",");
+        String[] parts = value.split(",", -1); // -1 сохраняет пустые значения в конце
         if (parts.length < 6) {
             throw new ManagerSaveException("Неверный формат строки: " + value);
         }
