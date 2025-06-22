@@ -4,10 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ManagersTest {
     @Test
     void shouldReturnInitializedManagers() {
-        TaskManager taskManager = Managers.getDefault();
-        assertNotNull(taskManager, "Должен возвращаться проинициализированный TaskManager");
+        FileBackedTaskManager fileBackedTaskManager = Managers.getDefault();
+        assertNotNull(fileBackedTaskManager, "Должен возвращаться проинициализированный FileBackedTaskManager");
 
         HistoryManager historyManager = Managers.getDefaultHistory();
         assertNotNull(historyManager, "Должен возвращаться проинициализированный HistoryManager");
+
+        TaskManager taskManager = Managers.getDefaultTaskManager();
+        assertNotNull(taskManager, "Должен возвращаться проинициализированный TaskManager");
+
     }
 }

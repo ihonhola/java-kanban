@@ -49,4 +49,24 @@ class FileBackedTaskManagerTest {
 
         file.delete();
     }
+
+    @Test
+    void loadFromFile_shouldLinkSubtasksToEpics() throws IOException {
+        File testFile = File.createTempFile("test_tasks", ".csv");
+
+        String testContent = "id,type,name,status,description,epic\n" +
+                "1,EPIC,Epic1,NEW,Description1,\n" +
+                "2,SUBTASK,Sub1,NEW,Description2,1\n" +
+                "3,SUBTASK,Sub2,DONE,Description3,1";
+        Files.writeString(testFile.toPath(), testContent);
+
+        FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(testFile);
+
+        assertEquals(1, manager.getEpicTasksList().size());
+        assertEquals(2, manager.getSubTasksList().size());
+
+        EpicTask epic = manager.getEpic(1);
+        assertEquals(2, epic.getSubTasks().size(), "У эпика должно быть 2 подзадачи");
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(), "Статус должен быть IN_PROGRESS (NEW + DONE)");
+    }
 }
