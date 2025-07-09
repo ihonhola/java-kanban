@@ -6,9 +6,9 @@ import java.util.Scanner;
 public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager;
     private static int nextId = 1;
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, EpicTask> epicTasks;
-    private HashMap<Integer, SubTask> subTasks;
+    protected HashMap<Integer, Task> tasks;
+    protected HashMap<Integer, EpicTask> epicTasks;
+    protected HashMap<Integer, SubTask> subTasks;
     Scanner scanner = new Scanner(System.in);
 
     public InMemoryTaskManager() {
