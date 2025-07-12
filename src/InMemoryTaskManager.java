@@ -65,7 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         task.setId(nextId++);
         tasks.put(task.getId(), task);
-        if (task.getStartTime() != null){
+        if (task.getStartTime() != null) {
             prioritizedTasks.add(task);
         }
         return task.getId();
@@ -105,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         subTask.setId(nextId++);
         subTasks.put(subTask.getId(), subTask);
-        if (subTask.getStartTime() != null){
+        if (subTask.getStartTime() != null) {
             prioritizedTasks.add(subTask);
         }
         EpicTask epic = epicTasks.get(epicId);
