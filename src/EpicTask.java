@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class EpicTask extends Task {
     private ArrayList<SubTask> subTasksList;
@@ -25,17 +27,10 @@ public class EpicTask extends Task {
             return;
         }
 
-        boolean allNew = true;
-        boolean allDone = true;
-
-        for (SubTask subTask : subTasksList) {
-            if (subTask.getStatus() != Status.NEW) {
-                allNew = false;
-            }
-            if (subTask.getStatus() != Status.DONE) {
-                allDone = false;
-            }
-        }
+        boolean allNew = subTasksList.stream()
+                .allMatch(subTask -> subTask.getStatus() == Status.NEW);
+        boolean allDone = subTasksList.stream()
+                .allMatch(subTask -> subTask.getStatus() == Status.DONE);
 
         if (allNew) {
             super.setStatus(Status.NEW);
@@ -52,26 +47,14 @@ public class EpicTask extends Task {
             return;
         }
 
-        for (int i = 0; i < subTasksList.size(); i++) {
-            SubTask currentSubTask = subTasksList.get(i);
-            if (currentSubTask.getId() == updatedSubTask.getId()) {
-                subTasksList.remove(i);
-                break;
-            }
-        }
-
+        subTasksList.removeIf(subTask -> subTask.getId() == updatedSubTask.getId());
         subTasksList.add(updatedSubTask);
         updateStatus();
     }
 
     public void removeSubTask(int subTaskId) {
-        for (int i = 0; i < subTasksList.size(); i++) {
-            SubTask current = subTasksList.get(i);
-            if (current.getId() == subTaskId) {
-                subTasksList.remove(i);
-                updateStatus();
-                return;
-            }
+        if (subTasksList.removeIf(subTask -> subTask.getId() == subTaskId)) {
+            updateStatus();
         }
     }
 
@@ -87,7 +70,40 @@ public class EpicTask extends Task {
                 ", description='" + super.getDescription() + '\'' +
                 ", status=" + super.getStatus() +
                 ", id=" + super.getId() +
+                ", duration=" + getDuration() +
+                ", startTime=" + getStartTime() +
+                ", endTime=" + getEndTime() +
                 ", subTasksCount=" + subTasksList.size() +
                 '}';
+    }
+
+    @Override
+    public Duration getDuration() {
+        if (subTasksList.isEmpty()) {
+            return Duration.ZERO;
+        }
+        return Duration.between(getStartTime(), getEndTime());
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        if (subTasksList.isEmpty()) {
+            return null;
+        }
+        return subTasksList.stream()
+                .map(SubTask::getStartTime)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        if (subTasksList.isEmpty()) {
+            return null;
+        }
+        return subTasksList.stream()
+                .map(SubTask::getEndTime)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
     }
 }
