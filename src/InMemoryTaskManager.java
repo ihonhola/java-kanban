@@ -40,6 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         int choice = scanner.nextInt();
         scanner.nextLine();
+
         switch (choice) {
             case 1:
                 return Status.NEW;
