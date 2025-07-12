@@ -1,3 +1,5 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,19 +11,20 @@ public class Main {
 
         System.out.println("Добавляем 2 задачи, эпик с двумя подзадачами, эпик с одной подзадачей");
 
-        taskManager.createTask(new Task("Начать спринт 5", "Успеть в сроки", Status.NEW));
+        taskManager.createTask(new Task("Начать спринт 5", "Успеть в сроки", Status.NEW,
+                Duration.ofHours(3), LocalDateTime.of(2025, 7, 2, 19, 00)));
         taskManager.createTask(new Task("Выполнить ФЗ спринта 4", "Исправить замечания",
-                Status.IN_PROGRESS));
+                Status.IN_PROGRESS,  Duration.ofHours(9), LocalDateTime.of(2025, 7, 5, 15, 00)));
 
         taskManager.createEpic(new EpicTask("Переезд в новую квартиру", "Перевезти все вещи"));
         taskManager.createSubTask(new SubTask("Собрать вещи", "Вещи из каждой комнаты",
-                Status.IN_PROGRESS, 3));
+                Status.IN_PROGRESS, 3, Duration.ofMinutes(30), LocalDateTime.of(2025, 7, 7, 8, 30)));
         taskManager.createSubTask(new SubTask("Заказать перевозку", "Яндекс доставка",
-                Status.NEW, 3));
+                Status.NEW, 3, Duration.ofMinutes(120), LocalDateTime.of(2025, 7, 1, 11, 15)));
 
         taskManager.createEpic(new EpicTask("Подготовка к командировке", "Конференция в Иркутске"));
         taskManager.createSubTask(new SubTask("Проживание", "Забронировать гостиницу",
-                Status.DONE, 6));
+                Status.DONE, 6, Duration.ofMinutes(150), LocalDateTime.of(2025, 7, 8, 19, 50)));
 
         System.out.println("Задачи:" + taskManager.getTasksList());
         System.out.println("Задачи:" + taskManager.getEpicTasksList());
@@ -30,21 +33,24 @@ public class Main {
 
         System.out.println("Обновляем статусы задач и подзадач (-> эпиков)");
 
-        Task updatedTask1 = new Task("Начать спринт 5", "Успеть в сроки", Status.IN_PROGRESS);
+        Task updatedTask1 = new Task("Начать спринт 5", "Успеть в сроки", Status.IN_PROGRESS,
+                Duration.ofMinutes(120), LocalDateTime.of(2025, 7, 9, 21, 23));
         updatedTask1.setId(1);
         taskManager.updateTask(updatedTask1);
-        Task updatedTask2 = new Task("Выполнить ФЗ спринта 4", "Исправить замечания", Status.DONE);
+        Task updatedTask2 = new Task("Выполнить ФЗ спринта 8", "Исправить замечания", Status.DONE,
+                Duration.ofHours(6), LocalDateTime.of(2025, 5, 15, 20, 50));
         updatedTask2.setId(2);
         taskManager.updateTask(updatedTask2);
         SubTask updatedSubTask1 = new SubTask("Собрать вещи", "Вещи из каждой комнаты",
-                Status.DONE, 3);
+                Status.DONE, 3, Duration.ofMinutes(10), LocalDateTime.of(2025, 6, 10, 13, 30));
         updatedSubTask1.setId(4);
         taskManager.updateSubTask(updatedSubTask1);
         SubTask updatedSubTask2 = new SubTask("Заказать перевозку", "Яндекс доставка",
-                Status.DONE, 3);
+                Status.DONE, 3, Duration.ofMinutes(17), LocalDateTime.of(2025, 5, 1, 12, 00));
         updatedSubTask2.setId(5);
         taskManager.updateSubTask(updatedSubTask2);
-        SubTask updatedSubTask3 = new SubTask("Проживание", "Гостиница забронирована", Status.DONE, 6);
+        SubTask updatedSubTask3 = new SubTask("Проживание", "Гостиница забронирована", Status.DONE, 6,
+                Duration.ofMinutes(1), LocalDateTime.of(2025, 6, 1, 14, 00));
         updatedSubTask3.setId(7);
         taskManager.updateSubTask(updatedSubTask3);
 

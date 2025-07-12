@@ -8,6 +8,7 @@ class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
     private Task task1;
     private Task task2;
+    private Task task3;
 
     @BeforeEach
     void setUp() {
@@ -16,6 +17,8 @@ class InMemoryHistoryManagerTest {
         task1.setId(1);
         task2 = new Task("Задача 2", "Описание 2", Status.NEW);
         task2.setId(2);
+        task3 = new Task("Задача 3", "Описание", Status.NEW);
+        task3.setId(3);
     }
 
     @Test
@@ -66,5 +69,54 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldHandleEmptyHistory() {
         assertTrue(historyManager.getHistory().isEmpty());
+    }
+
+    @Test
+    void shouldRemoveFromBeginning() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(task1.getId());
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size());
+        assertEquals(task2, history.get(0));
+        assertEquals(task3, history.get(1));
+    }
+
+    @Test
+    void shouldRemoveFromMiddle() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(task2.getId());
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size());
+        assertEquals(task1, history.get(0));
+        assertEquals(task3, history.get(1));
+    }
+
+    @Test
+    void shouldRemoveFromEnd() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
+
+        historyManager.remove(task3.getId());
+        List<Task> history = historyManager.getHistory();
+        assertEquals(2, history.size());
+        assertEquals(task1, history.get(0));
+        assertEquals(task2, history.get(1));
+    }
+
+    @Test
+    void shouldClearHistory() {
+        historyManager.add(task1);
+        historyManager.add(task2);
+
+        historyManager.clear();
+        assertTrue(historyManager.getHistory().isEmpty(),
+                "История должна быть пустой после очистки");
     }
 }
