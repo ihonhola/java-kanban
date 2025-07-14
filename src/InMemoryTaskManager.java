@@ -8,7 +8,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, EpicTask> epicTasks;
     protected HashMap<Integer, SubTask> subTasks;
 
-    Comparator<Task> comparator = (task1, task2) -> {
+    protected Comparator<Task> comparator = (task1, task2) -> {
         LocalDateTime time1 = task1.getStartTime();
         LocalDateTime time2 = task2.getStartTime();
 
@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
         return time1.compareTo(time2);
     };
 
-    TreeSet<Task> prioritizedTasks = new TreeSet<>(comparator);
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     Scanner scanner = new Scanner(System.in);
 
@@ -377,8 +377,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    @Override
-    public boolean hasTimeOverlap(Task task1, Task task2) {
+    private boolean hasTimeOverlap(Task task1, Task task2) {
         if (task1.getStartTime() == null || task2.getStartTime() == null) {
             return false;
         }
@@ -387,8 +386,7 @@ public class InMemoryTaskManager implements TaskManager {
                 task2.getStartTime().isBefore(task1.getEndTime());
     }
 
-    @Override
-    public boolean isTimeOverlapping(Task task) {
+    private boolean isTimeOverlapping(Task task) {
         if (task.getStartTime() == null) {
             return false;
         }

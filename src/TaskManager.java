@@ -51,8 +51,4 @@ public interface TaskManager {
     List<Task> getHistory();
 
     List<Task> getPrioritizedTasks();
-
-    boolean hasTimeOverlap(Task task1, Task task2);
-
-    boolean isTimeOverlapping(Task task);
 }
