@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,7 +9,9 @@ class TaskTest {
     @Test
     void addNewTask() {
         TaskManager taskManager = Managers.getDefault();
-        Task task = new Task("Задача", "Описание задачи", Status.NEW);
+        LocalDateTime startTime = LocalDateTime.of(2025, 7, 9, 22, 29);
+        Duration duration = Duration.ofHours(1);
+        Task task = new Task("Задача", "Описание задачи", Status.NEW, duration, startTime);
         final int taskId = taskManager.createTask(task);
 
         final Task savedTask = taskManager.getTask(taskId);
@@ -25,7 +29,10 @@ class TaskTest {
     @Test
     void taskShouldNotChangeAfterAddingToManager() {
         TaskManager manager = Managers.getDefault();
-        Task original = new Task("Оригинальная задача", "Описание задачи", Status.NEW);
+        LocalDateTime startTime = LocalDateTime.of(2025, 7, 9, 22, 31);
+        Duration duration = Duration.ofHours(1);
+        Task original = new Task("Оригинальная задача", "Описание задачи", Status.NEW,
+                duration, startTime);
 
         int taskId = manager.createTask(original);
         Task saved = manager.getTask(taskId);
