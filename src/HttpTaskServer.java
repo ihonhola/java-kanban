@@ -50,7 +50,7 @@ public class HttpTaskServer {
         httpTaskServer.start();
     }
 
-    public Gson getGson(){
+    public Gson getGson() {
         return gson;
     }
 }
