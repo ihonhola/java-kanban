@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
-    private final Gson gson ;
+    private final Gson gson;
 
     public SubtasksHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
