@@ -61,7 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (isTimeOverlapping(task)) {
-            throw new FileBackedTaskManager.ManagerSaveException("Задача пересекается по времени с существующей");
+            throw new TaskOverlapException("Задача пересекается по времени с существующей");
         }
 
         task.setId(nextId++);
@@ -101,7 +101,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (isTimeOverlapping(subTask)) {
-            throw new FileBackedTaskManager.ManagerSaveException("Задача пересекается по времени с существующей");
+            throw new TaskOverlapException("Задача пересекается по времени с существующей");
         }
 
         subTask.setId(nextId++);
@@ -177,8 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task updatedTask) {
         if (isTimeOverlapping(updatedTask)) {
-            throw new FileBackedTaskManager.ManagerSaveException("Обновленная задача пересекается " +
-                    "по времени с существующей");
+            throw new TaskOverlapException("Задача пересекается по времени с существующей");
         }
 
         int id = updatedTask.getId();
@@ -229,8 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (!existingSubTask.getStartTime().equals(updatedSubTask.getStartTime())) {
             if (isTimeOverlapping(updatedSubTask)) {
-                throw new FileBackedTaskManager.ManagerSaveException("Обновленная задача пересекается " +
-                        "по времени с существующей");
+                throw new TaskOverlapException("Задача пересекается по времени с существующей");
             }
         }
 
@@ -343,27 +341,30 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
+        if (task == null) {
+            throw new NotFoundException("Задача с id=" + id + " не найдена");
         }
+        historyManager.add(task);
         return task;
     }
 
     @Override
     public SubTask getSubTask(int id) {
         SubTask subTask = subTasks.get(id);
-        if (subTask != null) {
-            historyManager.add(subTask);
+        if (subTask == null) {
+            throw new NotFoundException("Подзадача с id=" + id + " не найдена");
         }
+        historyManager.add(subTask);
         return subTask;
     }
 
     @Override
     public EpicTask getEpic(int id) {
         EpicTask epic = epicTasks.get(id);
-        if (epic != null) {
-            historyManager.add(epic);
+        if (epic == null) {
+            throw new NotFoundException("Эпик с id=" + id + " не найден");
         }
+        historyManager.add(epic);
         return epic;
     }
 
