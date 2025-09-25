@@ -110,7 +110,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task overlappingTask = new Task("Конфликтная задача", "Описание", Status.NEW,
                 Duration.ofHours(2), task.getStartTime().plusMinutes(30));
 
-        assertThrows(FileBackedTaskManager.ManagerSaveException.class,
+        assertThrows(TaskOverlapException.class,
                 () -> taskManager.createTask(overlappingTask),
                 "Должно выбрасываться исключение при пересечении времени");
     }

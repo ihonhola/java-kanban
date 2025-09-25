@@ -120,7 +120,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         int subTaskId = subTask.getId();
         taskManager.deleteSubTask(subTaskId);
 
-        assertNull(taskManager.getSubTask(subTaskId));
+        assertThrows(NotFoundException.class, () -> taskManager.getSubTask(subTaskId));
         assertEquals(0, taskManager.getEpic(epic.getId()).getSubTasks().size());
     }
 
@@ -176,7 +176,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         manager.createTask(task1);
 
-        assertThrows(FileBackedTaskManager.ManagerSaveException.class,() -> manager.createTask(task2),
+        assertThrows(TaskOverlapException.class,() -> manager.createTask(task2),
                 "Задача пересекается по времени с существующей");
     }
 
@@ -192,7 +192,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Task task2 = new Task("Задача 2", "Описание", Status.NEW,
                 Duration.ofHours(1), LocalDateTime.of(2025, 7, 12, 12, 30));
 
-        assertThrows(FileBackedTaskManager.ManagerSaveException.class, () -> manager.createTask(task2));
+        assertThrows(TaskOverlapException.class, () -> manager.createTask(task2));
     }
 
     @Test

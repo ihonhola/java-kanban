@@ -15,16 +15,16 @@ class EpicTaskTest {
     void setUp() {
         taskManager = Managers.getDefault();
         LocalDateTime sub1Start = LocalDateTime.of(2025, 7, 9, 22, 33);
-        Duration sub1Duratiton = Duration.ofMinutes(60);
+        Duration sub1Duration = Duration.ofMinutes(60);
         LocalDateTime sub2Start = LocalDateTime.of(2025, 7, 9, 23, 34);
-        Duration sub2Duratiton = Duration.ofHours(1);
+        Duration sub2Duration = Duration.ofHours(1);
         epic = new EpicTask("Эпик", "Описание эпика");
         int epicId = taskManager.createEpic(epic);
 
         subTask1 = new SubTask("Подзадача 1", "Описание 1", Status.NEW, epicId,
-                sub1Duratiton, sub1Start);
+                sub1Duration, sub1Start);
         subTask2 = new SubTask("Подзадача 2", "Описание 2", Status.NEW, epicId,
-                sub2Duratiton, sub2Start);
+                sub2Duration, sub2Start);
         taskManager.createSubTask(subTask1);
         taskManager.createSubTask(subTask2);
     }
@@ -64,9 +64,11 @@ class EpicTaskTest {
     void shouldNotContainOrphanedSubTasks() {
         SubTask orphan = new SubTask("Сиротушка", "Описание", Status.NEW, 999,
                 Duration.ofDays(999), LocalDateTime.of(2049, 7, 2, 0, 0));
-        taskManager.createSubTask(orphan);
+        int result = taskManager.createSubTask(orphan);
 
-        assertNull(taskManager.getSubTask(orphan.getId()),
-                "Подзадачи с несуществующим эпиком не должны создаваться");
+        assertEquals(0, result, "Подзадачи с несуществующим эпиком не должны создаваться");
+        assertThrows(NotFoundException.class, () -> {
+            taskManager.getSubTask(orphan.getId());
+        }, "Подзадачи с несуществующим эпиком не должны быть доступны");
     }
 }
